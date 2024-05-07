@@ -116,7 +116,7 @@ def test():
     model.load_state_dict(torch.load(model_path))
 
     transform = SpatialTransform_unit().cuda()
-    transform_nearest = SpatialTransformNearest_unit().to(device)
+    transform_nearest = SpatialTransformNearest_unit().cuda()
     # diff_transform = DiffeomorphicTransform_unit(time_step=7).cuda()
     # com_transform = CompositionTransform().cuda()
 
