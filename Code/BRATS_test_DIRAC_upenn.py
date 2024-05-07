@@ -198,6 +198,8 @@ def test():
             size=imgshape,
             mode="nearest",
         )
+        seg_out = seg_out.double()
+
         print("label shape>", seg_out.shape)
 
         with torch.no_grad():
