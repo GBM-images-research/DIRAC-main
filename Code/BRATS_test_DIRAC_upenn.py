@@ -183,7 +183,7 @@ def test():
         seg_out = np.load(f"{datapath}/seg/{str(batch_idx+1).zfill(2)}.npy")
         # convert seg_out in a tensor
         seg_out = torch.from_numpy(seg_out).to(device)
-        desired_shape = (1, 1, 240, 240, 155)
+        desired_shape = (1, 2, 240, 240, 155)
         seg_out = seg_out.reshape(desired_shape)
 
         print("label shape>", seg_out.shape)
