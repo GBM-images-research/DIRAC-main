@@ -15,6 +15,7 @@ from bratsreg_model_stage import (
     Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_t1cet2_lvl2,
     Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_t1cet2_lvl3,
     SpatialTransform_unit,
+    SpatialTransformNearest_unit,
 )
 
 parser = ArgumentParser()
@@ -115,7 +116,7 @@ def test():
     model.load_state_dict(torch.load(model_path))
 
     transform = SpatialTransform_unit().cuda()
-    # transform_nearest = SpatialTransformNearest_unit().cuda()
+    transform_nearest = SpatialTransformNearest_unit().cuda()
     # diff_transform = DiffeomorphicTransform_unit(time_step=7).cuda()
     # com_transform = CompositionTransform().cuda()
 
@@ -167,7 +168,7 @@ def test():
     template = nib.load(val_fixed_t1ce_list[0])
     header, affine = template.header, template.affine
 
-    use_cuda = True
+    use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     # dice_total = []
     tre_total = []
@@ -215,6 +216,8 @@ def test():
             F_X_Y = F.interpolate(
                 F_X_Y, size=ori_img_shape, mode="trilinear", align_corners=True
             )
+            print("F_X_Y shape>", F_X_Y.shape)
+
             # Save F_X_Y as nii.gz
             save_img(
                 F_X_Y.cpu().numpy()[0],
@@ -343,7 +346,9 @@ def test():
             )
             # Save seg_out as as nii.gz
             torch.cuda.empty_cache()
-            SEG_OUT = transform(seg_out, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit)
+            SEG_OUT = transform_nearest(
+                seg_out, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit
+            )
             save_img(
                 SEG_OUT.cpu().numpy()[0, 0],
                 f"{save_path}/{batch_idx+1}_seg_out.nii.gz",
