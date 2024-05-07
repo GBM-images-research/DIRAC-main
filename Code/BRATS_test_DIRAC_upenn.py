@@ -182,9 +182,9 @@ def test():
         # Cargar segmentation labels
         seg_out = np.load(f"{datapath}/seg/{str(batch_idx+1).zfill(2)}.npy")
         # convert seg_out in a tensor
-        seg_out = torch.from_numpy(seg_out).to(device)
-        desired_shape = (1, 1, 240, 240, 155)
-        seg_out = seg_out.reshape(desired_shape)
+        # seg_out = torch.from_numpy(seg_out).to(device)
+        # desired_shape = (1, 1, 240, 240, 155)
+        # seg_out = seg_out.reshape(desired_shape)
 
         print("X, Y>", X_ori.shape, Y_ori.shape)
 
