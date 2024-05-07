@@ -133,14 +133,14 @@ def test():
         [path for path in val_moving_csv_list if path not in val_fixed_csv_list]
     )
 
-    val_fixed_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_t1ce.nii.gz"))
-    val_moving_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_t1ce.nii.gz"))
+    val_fixed_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_T1GD.nii.gz"))
+    val_moving_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_T1GD.nii.gz"))
     val_moving_t1ce_list = sorted(
         [path for path in val_moving_t1ce_list if path not in val_fixed_t1ce_list]
     )
 
-    val_fixed_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_t2.nii.gz"))
-    val_moving_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_t2.nii.gz"))
+    val_fixed_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_T2.nii.gz"))
+    val_moving_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_T2.nii.gz"))
     val_moving_t2_list = sorted(
         [path for path in val_moving_t2_list if path not in val_fixed_t2_list]
     )
