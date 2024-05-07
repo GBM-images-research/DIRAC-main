@@ -243,6 +243,7 @@ def test():
                 .cuda()
                 .float()
             )
+            print("grid_unit shape>", grid_unit.shape)
             # Save grid_unit as as nii.gz
             save_img(
                 grid_unit.cpu().numpy()[0],
