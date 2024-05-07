@@ -179,12 +179,18 @@ def test():
             data["move_label"].numpy()[0],
             data["fixed_label"].numpy()[0],
         )
-
+        # Cargar segmentation labels
+        seg_out = np.load(f"{datapath}/seg/{str(batch_idx+1).zfill(2)}.npy")
         ori_img_shape = X_ori.shape[2:]
         h, w, d = ori_img_shape
 
         X = F.interpolate(X_ori, size=imgshape, mode="trilinear")
         Y = F.interpolate(Y_ori, size=imgshape, mode="trilinear")
+        # seg_out = F.interpolate(
+        #     torch.from_numpy(seg_out).unsqueeze(dim=0).float(),
+        #     size=imgshape,
+        #     mode="nearest",
+        # )
 
         with torch.no_grad():
             reg_code = torch.tensor([0.3], dtype=X.dtype, device=X.device).unsqueeze(
@@ -197,16 +203,24 @@ def test():
             F_X_Y = F.interpolate(
                 F_X_Y, size=ori_img_shape, mode="trilinear", align_corners=True
             )
-            # Save F_X_Y as numpy array in file using numpy save method
-            F_X_Y_numpy = F_X_Y.cpu().numpy()
-            np.save(f"{save_path}/{batch_idx+1}F_X_Y_numpy.npy", F_X_Y_numpy)
+            # Save F_X_Y as nii.gz
+            save_img(
+                F_X_Y.cpu().numpy()[0],
+                f"{save_path}/{batch_idx+1}F_X_Y.nii.gz",
+                header,
+                affine,
+            )
 
             F_Y_X = F.interpolate(
                 F_Y_X, size=ori_img_shape, mode="trilinear", align_corners=True
             )
-            # Save F_Y_X as numpy array in file using numpy save method
-            F_Y_X_numpy = F_Y_X.cpu().numpy()
-            np.save(f"{save_path}/{batch_idx+1}F_Y_X_numpy.npy", F_Y_X_numpy)
+            # Save F_Y_X as as nii.gz
+            save_img(
+                F_Y_X.cpu().numpy()[0],
+                f"{save_path}/{batch_idx+1}F_Y_X.nii.gz",
+                header,
+                affine,
+            )
 
             grid_unit = generate_grid_unit(ori_img_shape)
             grid_unit = (
@@ -214,9 +228,13 @@ def test():
                 .cuda()
                 .float()
             )
-            # Save grid_unit as numpy array in file using numpy save method
-            grid_unit_numpy = grid_unit.cpu().numpy()
-            np.save(f"{save_path}/{batch_idx+1}grid_unit_numpy.npy", grid_unit_numpy)
+            # Save grid_unit as as nii.gz
+            save_img(
+                grid_unit.cpu().numpy()[0],
+                f"{save_path}/{batch_idx+1}grid_unit.nii.gz",
+                header,
+                affine,
+            )
 
             if output_seg:
                 F_X_Y_warpped = transform(
@@ -298,6 +316,7 @@ def test():
 
             X_Y = transform(X_ori, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit)
             Y_X = transform(Y_ori, F_Y_X.permute(0, 2, 3, 4, 1), grid_unit)
+            SEG_OUT = transform(seg_out, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit)
 
             save_img(
                 X_Y.cpu().numpy()[0, 0],
@@ -308,6 +327,12 @@ def test():
             save_img(
                 Y_X.cpu().numpy()[0, 0],
                 f"{save_path}/{batch_idx+1}_Y_X.nii.gz",
+                header=header,
+                affine=affine,
+            )
+            save_img(
+                SEG_OUT.cpu().numpy()[0, 0],
+                f"{save_path}/{batch_idx+1}_seg_out.nii.gz",
                 header=header,
                 affine=affine,
             )
