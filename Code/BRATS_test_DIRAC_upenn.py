@@ -319,7 +319,6 @@ def test():
 
             X_Y = transform(X_ori, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit)
             Y_X = transform(Y_ori, F_Y_X.permute(0, 2, 3, 4, 1), grid_unit)
-            SEG_OUT = transform(seg_out, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit)
 
             save_img(
                 X_Y.cpu().numpy()[0, 0],
@@ -333,6 +332,9 @@ def test():
                 header=header,
                 affine=affine,
             )
+            # Save seg_out as as nii.gz
+            torch.cuda.empty_cache()
+            SEG_OUT = transform(seg_out, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit)
             save_img(
                 SEG_OUT.cpu().numpy()[0, 0],
                 f"{save_path}/{batch_idx+1}_seg_out.nii.gz",
