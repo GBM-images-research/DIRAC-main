@@ -183,6 +183,7 @@ def test():
         seg_out = np.load(f"{datapath}/seg/{str(batch_idx+1).zfill(2)}.npy")
         # convert seg_out in a tensor
         seg_out = torch.from_numpy(seg_out).to(device)
+        print("label shape>", seg_out.shape)
 
         ori_img_shape = X_ori.shape[2:]
         h, w, d = ori_img_shape
