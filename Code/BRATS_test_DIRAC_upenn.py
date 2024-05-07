@@ -183,10 +183,9 @@ def test():
         seg_out = np.load(f"{datapath}/seg/{str(batch_idx+1).zfill(2)}.npy")
         # convert seg_out in a tensor
         seg_out = torch.from_numpy(seg_out).to(device)
-        desired_shape = X_ori.shape  # (1, 1, 240, 240, 155)
+        desired_shape = (1, 1, 240, 240, 155)
         seg_out = seg_out.reshape(desired_shape)
 
-        print("label shape>", seg_out.shape)
         print("X, Y>", X_ori.shape, Y_ori.shape)
 
         ori_img_shape = X_ori.shape[2:]
@@ -194,11 +193,12 @@ def test():
 
         X = F.interpolate(X_ori, size=imgshape, mode="trilinear")
         Y = F.interpolate(Y_ori, size=imgshape, mode="trilinear")
-        # seg_out = F.interpolate(
-        #     torch.from_numpy(seg_out).unsqueeze(dim=0).float(),
-        #     size=imgshape,
-        #     mode="nearest",
-        # )
+        seg_out = F.interpolate(
+            torch.from_numpy(seg_out).unsqueeze(dim=0).float(),
+            size=imgshape,
+            mode="nearest",
+        )
+        print("label shape>", seg_out.shape)
 
         with torch.no_grad():
             reg_code = torch.tensor([0.3], dtype=X.dtype, device=X.device).unsqueeze(
