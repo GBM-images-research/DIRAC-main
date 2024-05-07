@@ -197,9 +197,16 @@ def test():
             F_X_Y = F.interpolate(
                 F_X_Y, size=ori_img_shape, mode="trilinear", align_corners=True
             )
+            # Save F_X_Y as numpy array in file using numpy save method
+            F_X_Y_numpy = F_X_Y.cpu().numpy()
+            np.save(f"{save_path}/{batch_idx+1}F_X_Y_numpy.npy", F_X_Y_numpy)
+
             F_Y_X = F.interpolate(
                 F_Y_X, size=ori_img_shape, mode="trilinear", align_corners=True
             )
+            # Save F_Y_X as numpy array in file using numpy save method
+            F_Y_X_numpy = F_Y_X.cpu().numpy()
+            np.save(f"{save_path}/{batch_idx+1}F_Y_X_numpy.npy", F_Y_X_numpy)
 
             grid_unit = generate_grid_unit(ori_img_shape)
             grid_unit = (
@@ -207,6 +214,9 @@ def test():
                 .cuda()
                 .float()
             )
+            # Save grid_unit as numpy array in file using numpy save method
+            grid_unit_numpy = grid_unit.cpu().numpy()
+            np.save(f"{save_path}/{batch_idx+1}grid_unit_numpy.npy", grid_unit_numpy)
 
             if output_seg:
                 F_X_Y_warpped = transform(
