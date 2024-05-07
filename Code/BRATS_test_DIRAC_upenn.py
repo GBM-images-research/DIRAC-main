@@ -201,7 +201,7 @@ def test():
         #     size=imgshape,
         #     mode="nearest",
         # )
-        seg_out = seg_out.double()
+        # seg_out = seg_out.double()
 
         print("label shape>", seg_out.shape)
 
