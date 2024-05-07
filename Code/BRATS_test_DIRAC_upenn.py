@@ -193,11 +193,11 @@ def test():
 
         X = F.interpolate(X_ori, size=imgshape, mode="trilinear")
         Y = F.interpolate(Y_ori, size=imgshape, mode="trilinear")
-        seg_out = F.interpolate(
-            seg_out,
-            size=imgshape,
-            mode="nearest",
-        )
+        # seg_out = F.interpolate(
+        #     seg_out,
+        #     size=imgshape,
+        #     mode="nearest",
+        # )
         seg_out = seg_out.double()
 
         print("label shape>", seg_out.shape)
