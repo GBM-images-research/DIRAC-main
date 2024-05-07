@@ -184,6 +184,7 @@ def test():
         # convert seg_out in a tensor
         seg_out = torch.from_numpy(seg_out).to(device)
         print("label shape>", seg_out.shape)
+        print("X, Y>", X_ori.shape, Y_ori.shape)
 
         ori_img_shape = X_ori.shape[2:]
         h, w, d = ori_img_shape
