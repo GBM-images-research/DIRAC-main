@@ -181,11 +181,11 @@ def test():
             data["fixed_label"].numpy()[0],
         )
         # Cargar segmentation labels
-        seg_out = np.load(f"{datapath}/seg/{str(batch_idx+1).zfill(2)}.npy")
+        # seg_out = np.load(f"{datapath}/seg/{str(batch_idx+1).zfill(2)}.npy")
 
         # convert seg_out in a tensor
-        seg_out = torch.from_numpy(seg_out).to(device)
-        seg_out = seg_out.unsqueeze(0).unsqueeze(1)
+        # seg_out = torch.from_numpy(seg_out).to(device)
+        # seg_out = seg_out.unsqueeze(0).unsqueeze(1)
         # desired_shape = (1, 1, 240, 240, 155)
         # seg_out = seg_out.reshape(desired_shape)
 
@@ -202,8 +202,7 @@ def test():
         #     mode="nearest",
         # )
         # seg_out = seg_out.double()
-
-        print("label shape>", seg_out.shape)
+        # print("label shape>", seg_out.shape)
 
         with torch.no_grad():
             reg_code = torch.tensor([0.3], dtype=X.dtype, device=X.device).unsqueeze(
@@ -346,16 +345,16 @@ def test():
                 affine=affine,
             )
             # Save seg_out as as nii.gz
-            torch.cuda.empty_cache()
-            SEG_OUT = transform_nearest(
-                seg_out, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit
-            )
-            save_img(
-                SEG_OUT.cpu().numpy()[0, 0],
-                f"{save_path}/{batch_idx+1}_seg_out.nii.gz",
-                header=header,
-                affine=affine,
-            )
+            # torch.cuda.empty_cache()
+            # SEG_OUT = transform_nearest(
+            #     seg_out, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit
+            # )
+            # save_img(
+            #     SEG_OUT.cpu().numpy()[0, 0],
+            #     f"{save_path}/{batch_idx+1}_seg_out.nii.gz",
+            #     header=header,
+            #     affine=affine,
+            # )
 
             full_F_X_Y = torch.zeros(F_X_Y.shape)
             full_F_X_Y[0, 0] = F_X_Y[0, 2] * (h - 1) / 2
