@@ -147,7 +147,7 @@ def test():
     #     [path for path in val_moving_t2_list if path not in val_fixed_t2_list]
     # )
 
-    datapath = "../Dataset/test"
+    # datapath = "../Dataset/test"
     (
         val_fixed_csv_list,
         val_moving_csv_list,
