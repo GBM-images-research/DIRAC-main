@@ -17,6 +17,7 @@ from bratsreg_model_stage import (
     SpatialTransform_unit,
     SpatialTransformNearest_unit,
 )
+from load_data import get_paths_data
 
 parser = ArgumentParser()
 parser.add_argument(
@@ -126,26 +127,35 @@ def test():
 
     # Validation
     start, end = 0, 20
-    val_fixed_csv_list = sorted(
-        glob.glob(f"{datapath}/BraTSReg_*/*_0000_landmarks.csv")
-    )
-    val_moving_csv_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_landmarks.csv"))
-    val_moving_csv_list = sorted(
-        [path for path in val_moving_csv_list if path not in val_fixed_csv_list]
-    )
+    # val_fixed_csv_list = sorted(
+    #     glob.glob(f"{datapath}/BraTSReg_*/*_0000_landmarks.csv")
+    # )
+    # val_moving_csv_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_landmarks.csv"))
+    # val_moving_csv_list = sorted(
+    #     [path for path in val_moving_csv_list if path not in val_fixed_csv_list]
+    # )
 
-    val_fixed_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_T1GD.nii.gz"))
-    val_moving_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_T1GD.nii.gz"))
-    val_moving_t1ce_list = sorted(
-        [path for path in val_moving_t1ce_list if path not in val_fixed_t1ce_list]
-    )
+    # val_fixed_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_T1GD.nii.gz"))
+    # val_moving_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_T1GD.nii.gz"))
+    # val_moving_t1ce_list = sorted(
+    #     [path for path in val_moving_t1ce_list if path not in val_fixed_t1ce_list]
+    # )
 
-    val_fixed_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_T2.nii.gz"))
-    val_moving_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_T2.nii.gz"))
-    val_moving_t2_list = sorted(
-        [path for path in val_moving_t2_list if path not in val_fixed_t2_list]
-    )
+    # val_fixed_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_T2.nii.gz"))
+    # val_moving_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_T2.nii.gz"))
+    # val_moving_t2_list = sorted(
+    #     [path for path in val_moving_t2_list if path not in val_fixed_t2_list]
+    # )
 
+    datapath = "../Dataset/test"
+    (
+        val_fixed_csv_list,
+        val_moving_csv_list,
+        val_fixed_t1ce_list,
+        val_moving_t1ce_list,
+        val_fixed_t2_list,
+        val_moving_t2_list,
+    ) = get_paths_data(datapath)
     valid_generator = Data.DataLoader(
         Validation_Brats_t1cet2(
             val_fixed_t1ce_list,
