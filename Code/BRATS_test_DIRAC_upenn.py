@@ -135,19 +135,20 @@ def test():
     # val_moving_csv_list = sorted([path for path in val_moving_csv_list if path not in val_fixed_csv_list])
     # tumor_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_0000_seg.nii.gz"))[-20:]
 
-    val_fixed_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_0000_t1ce.nii.gz"))
-    val_moving_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_t1ce.nii.gz"))
-    val_moving_list = sorted(
-        [path for path in val_moving_list if path not in val_fixed_list]
-    )
+    # # original
+    # val_fixed_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_0000_t1ce.nii.gz"))
+    # val_moving_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_t1ce.nii.gz"))
+    # val_moving_list = sorted(
+    #     [path for path in val_moving_list if path not in val_fixed_list]
+    # )
 
-    val_fixed_csv_list = sorted(
-        glob.glob(f"{datapath}/BraTSReg_*/*_0000_landmarks.csv")
-    )
-    val_moving_csv_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_landmarks.csv"))
-    val_moving_csv_list = sorted(
-        [path for path in val_moving_csv_list if path not in val_fixed_csv_list]
-    )
+    # val_fixed_csv_list = sorted(
+    #     glob.glob(f"{datapath}/BraTSReg_*/*_0000_landmarks.csv")
+    # )
+    # val_moving_csv_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_landmarks.csv"))
+    # val_moving_csv_list = sorted(
+    #     [path for path in val_moving_csv_list if path not in val_fixed_csv_list]
+    # )
 
     # datapath = "../Dataset/test"
     (
