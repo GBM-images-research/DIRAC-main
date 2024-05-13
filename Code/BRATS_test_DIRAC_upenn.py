@@ -9,13 +9,12 @@ import torch.nn.functional as F
 import torch.utils.data as Data
 from scipy.ndimage.interpolation import map_coordinates
 
-from Functions import Validation_Brats_t1cet2, generate_grid_unit, save_img
+from Functions import Validation_Brats, generate_grid_unit, save_img
 from bratsreg_model_stage import (
-    Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_t1cet2_lvl1,
-    Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_t1cet2_lvl2,
-    Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_t1cet2_lvl3,
+    Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_lvl1,
+    Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_lvl2,
+    Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_lvl3,
     SpatialTransform_unit,
-    SpatialTransformNearest_unit,
 )
 from load_data import get_paths_data
 
@@ -24,7 +23,7 @@ parser.add_argument(
     "--modelname",
     type=str,
     dest="modelname",
-    default="../Model/Brats_NCC_disp_fea7b5_AdaIn64_t1cet2_fbcon_occ01_inv5_a0015_aug_mean_ffixed_stagelvl3_98000.pth",
+    default="../Model/Brats_NCC_disp_fea6b5_AdaIn64_t1ce_fbcon_occ01_inv5_a0015_aug_mean_fffixed_github_stagelvl3_64000.pth",
     help="Model name",
 )
 parser.add_argument("--lr", type=float, dest="lr", default=1e-4, help="learning rate")
@@ -32,7 +31,7 @@ parser.add_argument(
     "--start_channel",
     type=int,
     dest="start_channel",
-    default=7,
+    default=6,
     help="number of start channels",
 )
 parser.add_argument(
@@ -53,7 +52,7 @@ parser.add_argument(
     "--output_seg",
     type=bool,
     dest="output_seg",
-    default=True,
+    default=False,
     help="True: save segmentation map",
 )
 
@@ -82,8 +81,8 @@ def dice(im1, atlas):
 
 def test():
     print("Training lvl3...")
-    model_lvl1 = Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_t1cet2_lvl1(
-        4,
+    model_lvl1 = Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_lvl1(
+        2,
         3,
         start_channel,
         is_train=True,
@@ -91,8 +90,8 @@ def test():
         range_flow=range_flow,
         num_block=num_cblock,
     ).cuda()
-    model_lvl2 = Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_t1cet2_lvl2(
-        4,
+    model_lvl2 = Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_lvl2(
+        2,
         3,
         start_channel,
         is_train=True,
@@ -102,8 +101,8 @@ def test():
         num_block=num_cblock,
     ).cuda()
 
-    model = Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_t1cet2_lvl3(
-        4,
+    model = Miccai2021_LDR_laplacian_unit_disp_add_AdaIn_lvl3(
+        2,
         3,
         start_channel,
         is_train=True,
@@ -117,7 +116,7 @@ def test():
     model.load_state_dict(torch.load(model_path))
 
     transform = SpatialTransform_unit().cuda()
-    transform_nearest = SpatialTransformNearest_unit().cuda()
+    # transform_nearest = SpatialTransformNearest_unit().cuda()
     # diff_transform = DiffeomorphicTransform_unit(time_step=7).cuda()
     # com_transform = CompositionTransform().cuda()
 
@@ -127,45 +126,46 @@ def test():
 
     # Validation
     start, end = 0, 20
-    # val_fixed_csv_list = sorted(
-    #     glob.glob(f"{datapath}/BraTSReg_*/*_0000_landmarks.csv")
-    # )
-    # val_moving_csv_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_landmarks.csv"))
-    # val_moving_csv_list = sorted(
-    #     [path for path in val_moving_csv_list if path not in val_fixed_csv_list]
-    # )
+    # val_fixed_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_0000_t1ce.nii.gz"))[-20:]
+    # val_moving_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_t1ce.nii.gz"))[-40:]
+    # val_moving_list = sorted([path for path in val_moving_list if path not in val_fixed_list])
+    #
+    # val_fixed_csv_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_0000_landmarks.csv"))[-20:]
+    # val_moving_csv_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_landmarks.csv"))[-40:]
+    # val_moving_csv_list = sorted([path for path in val_moving_csv_list if path not in val_fixed_csv_list])
+    # tumor_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_0000_seg.nii.gz"))[-20:]
 
-    # val_fixed_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_T1GD.nii.gz"))
-    # val_moving_t1ce_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_T1GD.nii.gz"))
-    # val_moving_t1ce_list = sorted(
-    #     [path for path in val_moving_t1ce_list if path not in val_fixed_t1ce_list]
-    # )
+    val_fixed_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_0000_t1ce.nii.gz"))
+    val_moving_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_t1ce.nii.gz"))
+    val_moving_list = sorted(
+        [path for path in val_moving_list if path not in val_fixed_list]
+    )
 
-    # val_fixed_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_11_T2.nii.gz"))
-    # val_moving_t2_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_T2.nii.gz"))
-    # val_moving_t2_list = sorted(
-    #     [path for path in val_moving_t2_list if path not in val_fixed_t2_list]
-    # )
+    val_fixed_csv_list = sorted(
+        glob.glob(f"{datapath}/BraTSReg_*/*_0000_landmarks.csv")
+    )
+    val_moving_csv_list = sorted(glob.glob(f"{datapath}/BraTSReg_*/*_landmarks.csv"))
+    val_moving_csv_list = sorted(
+        [path for path in val_moving_csv_list if path not in val_fixed_csv_list]
+    )
 
     # datapath = "../Dataset/test"
     (
         val_fixed_csv_list,
         val_moving_csv_list,
-        val_fixed_t1ce_list,
-        val_moving_t1ce_list,
-        val_fixed_t2_list,
-        val_moving_t2_list,
+        val_fixed_list,
+        val_moving_list,
+        _,
+        _,
     ) = get_paths_data(datapath)
 
     valid_generator = Data.DataLoader(
-        Validation_Brats_t1cet2(
-            val_fixed_t1ce_list,
-            val_moving_t1ce_list,
-            val_fixed_t2_list,
-            val_moving_t2_list,
+        Validation_Brats(
+            val_fixed_list,
+            val_moving_list,
             val_fixed_csv_list,
             val_moving_csv_list,
-            norm=False,
+            norm=True,
         ),
         batch_size=1,
         shuffle=False,
@@ -176,44 +176,29 @@ def test():
     if not os.path.exists(save_path):
         os.mkdir(save_path)
 
-    template = nib.load(val_fixed_t1ce_list[0])
+    template = nib.load(val_fixed_list[0])
     header, affine = template.header, template.affine
 
-    use_cuda = torch.cuda.is_available()
+    use_cuda = True
     device = torch.device("cuda" if use_cuda else "cpu")
     # dice_total = []
     tre_total = []
     print("\nValiding...")
     for batch_idx, data in enumerate(valid_generator):
+        # X_ori, Y_ori, X_label, Y_label, tumor_mask = data['move'].to(device), data['fixed'].to(device), \
+        #                          data['move_label'].numpy()[0], data['fixed_label'].numpy()[0], data['tumor_mask'].to(device)
         Y_ori, X_ori, X_label, Y_label = (
             data["move"].to(device),
             data["fixed"].to(device),
             data["move_label"].numpy()[0],
             data["fixed_label"].numpy()[0],
         )
-        # Cargar segmentation labels
-        # seg_out = np.load(f"{datapath}/seg/{str(batch_idx+1).zfill(2)}.npy")
-
-        # convert seg_out in a tensor
-        # seg_out = torch.from_numpy(seg_out).to(device)
-        # seg_out = seg_out.unsqueeze(0).unsqueeze(1)
-        # desired_shape = (1, 1, 240, 240, 155)
-        # seg_out = seg_out.reshape(desired_shape)
-
-        print("X, Y>", X_ori.shape, Y_ori.shape)
 
         ori_img_shape = X_ori.shape[2:]
         h, w, d = ori_img_shape
 
         X = F.interpolate(X_ori, size=imgshape, mode="trilinear")
         Y = F.interpolate(Y_ori, size=imgshape, mode="trilinear")
-        # seg_out = F.interpolate(
-        #     seg_out,
-        #     size=imgshape,
-        #     mode="nearest",
-        # )
-        # seg_out = seg_out.double()
-        # print("label shape>", seg_out.shape)
 
         with torch.no_grad():
             reg_code = torch.tensor([0.3], dtype=X.dtype, device=X.device).unsqueeze(
@@ -226,6 +211,17 @@ def test():
             F_X_Y = F.interpolate(
                 F_X_Y, size=ori_img_shape, mode="trilinear", align_corners=True
             )
+            F_Y_X = F.interpolate(
+                F_Y_X, size=ori_img_shape, mode="trilinear", align_corners=True
+            )
+
+            grid_unit = generate_grid_unit(ori_img_shape)
+            grid_unit = (
+                torch.from_numpy(np.reshape(grid_unit, (1,) + grid_unit.shape))
+                .cuda()
+                .float()
+            )
+            # Salvar transformaciones
             print("F_X_Y shape>", F_X_Y.shape)
 
             # Save F_X_Y as nii.gz
@@ -235,23 +231,12 @@ def test():
                 header,
                 affine,
             )
-
-            F_Y_X = F.interpolate(
-                F_Y_X, size=ori_img_shape, mode="trilinear", align_corners=True
-            )
             # Save F_Y_X as as nii.gz
             save_img(
                 F_Y_X.cpu().numpy()[0],
                 f"{save_path}/{batch_idx+1}F_Y_X.nii.gz",
                 header,
                 affine,
-            )
-
-            grid_unit = generate_grid_unit(ori_img_shape)
-            grid_unit = (
-                torch.from_numpy(np.reshape(grid_unit, (1,) + grid_unit.shape))
-                .cuda()
-                .float()
             )
             print("grid_unit shape>", grid_unit.shape)
             # Save grid_unit as as nii.gz
@@ -273,8 +258,8 @@ def test():
                 diff_fw = F_X_Y + F_Y_X_warpped  # Y
                 diff_bw = F_Y_X + F_X_Y_warpped  # X
 
-                fw_mask = (Y_ori[:, 0:1] > 0).float()
-                bw_mask = (X_ori[:, 0:1] > 0).float()
+                fw_mask = (Y_ori > 0).float()
+                bw_mask = (X_ori > 0).float()
 
                 u_diff_fw = torch.sum(
                     torch.norm(diff_fw * fw_mask, dim=1, keepdim=True)
@@ -284,10 +269,10 @@ def test():
                 ) / torch.sum(bw_mask)
 
                 thresh_fw = (u_diff_fw + 0.015) * torch.ones_like(
-                    Y_ori[:, 0:1], device=Y_ori.device
+                    Y_ori, device=Y_ori.device
                 )
                 thresh_bw = (u_diff_bw + 0.015) * torch.ones_like(
-                    X_ori[:, 0:1], device=X_ori.device
+                    X_ori, device=X_ori.device
                 )
 
                 # smoothing
@@ -314,58 +299,47 @@ def test():
                 occ_xy = occ_xy * fw_mask
                 occ_yx = occ_yx * bw_mask
 
-                # save_img(
-                #     occ_xy.cpu().numpy()[0, 0],
-                #     f"{save_path}/{batch_idx + 1}_xy_seg.nii.gz",
-                #     header=header,
-                #     affine=affine,
-                # )
-                # save_img(
-                #     occ_yx.cpu().numpy()[0, 0],
-                #     f"{save_path}/{batch_idx + 1}_yx_seg.nii.gz",
-                #     header=header,
-                #     affine=affine,
-                # )
+                save_img(
+                    occ_xy.cpu().numpy()[0, 0],
+                    f"{save_path}/{batch_idx + 1}_xy_seg.nii.gz",
+                    header=header,
+                    affine=affine,
+                )
+                save_img(
+                    occ_yx.cpu().numpy()[0, 0],
+                    f"{save_path}/{batch_idx + 1}_yx_seg.nii.gz",
+                    header=header,
+                    affine=affine,
+                )
 
-                # save_img(
-                #     norm_diff_fw.cpu().numpy()[0, 0],
-                #     f"{save_path}/{batch_idx + 1}_diff_fw.nii.gz",
-                #     header=header,
-                #     affine=affine,
-                # )
-                # save_img(
-                #     norm_diff_bw.cpu().numpy()[0, 0],
-                #     f"{save_path}/{batch_idx + 1}_diff_bw.nii.gz",
-                #     header=header,
-                #     affine=affine,
-                # )
+                save_img(
+                    norm_diff_fw.cpu().numpy()[0, 0],
+                    f"{save_path}/{batch_idx + 1}_diff_fw.nii.gz",
+                    header=header,
+                    affine=affine,
+                )
+                save_img(
+                    norm_diff_bw.cpu().numpy()[0, 0],
+                    f"{save_path}/{batch_idx + 1}_diff_bw.nii.gz",
+                    header=header,
+                    affine=affine,
+                )
 
             X_Y = transform(X_ori, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit)
             Y_X = transform(Y_ori, F_Y_X.permute(0, 2, 3, 4, 1), grid_unit)
 
             save_img(
                 X_Y.cpu().numpy()[0, 0],
-                f"{save_path}/{batch_idx+1}_X_Y.nii.gz",
+                f"{save_path}/{batch_idx + 1}_X_Y.nii.gz",
                 header=header,
                 affine=affine,
             )
             save_img(
                 Y_X.cpu().numpy()[0, 0],
-                f"{save_path}/{batch_idx+1}_Y_X.nii.gz",
+                f"{save_path}/{batch_idx + 1}_Y_X.nii.gz",
                 header=header,
                 affine=affine,
             )
-            # Save seg_out as as nii.gz
-            # torch.cuda.empty_cache()
-            # SEG_OUT = transform_nearest(
-            #     seg_out, F_X_Y.permute(0, 2, 3, 4, 1), grid_unit
-            # )
-            # save_img(
-            #     SEG_OUT.cpu().numpy()[0, 0],
-            #     f"{save_path}/{batch_idx+1}_seg_out.nii.gz",
-            #     header=header,
-            #     affine=affine,
-            # )
 
             full_F_X_Y = torch.zeros(F_X_Y.shape)
             full_F_X_Y[0, 0] = F_X_Y[0, 2] * (h - 1) / 2
