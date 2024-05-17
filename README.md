@@ -32,6 +32,10 @@ Step 3: `python BRATS_train_DIRAC.py` to train the DIRAC model or `python BRATS_
 # Vizualice register results
 Step 1: Download Dataset and results folders,  unzip these and put into DIRAC-MAIN folder
 
+- [Datset](https://drive.google.com/file/d/1dMaPHoEqsDqXL7vGZd9S0qMFvLmplSge/view?usp=sharing)
+- [Result]()
+- [Resul_D]()
+
 Steep 2: Go to `/Code` folder 
 
 ``` 
