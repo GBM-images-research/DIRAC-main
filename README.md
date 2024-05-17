@@ -30,9 +30,15 @@ Step 2: Define and split the dataset into training and validation set, i.e., 'Da
 Step 3: `python BRATS_train_DIRAC.py` to train the DIRAC model or `python BRATS_train_DIRAC_D.py` to train the DIRAC-D model.
 
 # Vizualice register results
-Step 1: Download Dataset and results folders unzip and these into DIRAC-MAIN folder
+Step 1: Download Dataset and results folders,  unzip these and put into DIRAC-MAIN folder
 
-Steep 2: Run
+Steep 2: Go to `/Code` folder 
+
+``` 
+cd ./Code
+```
+and run:
+
 ```
 python3 visualizar.py --serie 2 --result Result --backward
 ```
