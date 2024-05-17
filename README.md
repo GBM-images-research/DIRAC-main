@@ -29,6 +29,16 @@ Step 2: Define and split the dataset into training and validation set, i.e., 'Da
 
 Step 3: `python BRATS_train_DIRAC.py` to train the DIRAC model or `python BRATS_train_DIRAC_D.py` to train the DIRAC-D model.
 
+# Vizualice register results
+Step 1: Download Dataset and results folders unzip and these into DIRAC-MAIN folder
+
+Steep 2: Run
+```
+python3 visualizar.py --serie 2 --result Result --backward
+```
+Where `--serie` is the number of case 1, 2, 3,...36, `--result` takes `Result` for deformations of DIRAC method and `Result_D` for deformation of DIRAC-D method.
+Finally put `--backward` if you want to see the Y_X registration (follow image is warped in function of base image) otherwise avoid this argument
+
 ## Publication
 If you find this repository useful, please cite:
 - **Unsupervised Deformable Image Registration with Absent Correspondences in Pre-operative and Post-Recurrence Brain Tumor MRI Scans**  

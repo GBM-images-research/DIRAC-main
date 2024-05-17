@@ -164,9 +164,11 @@ Data/
 wandb/
 artifacts/
 Result/
+Result_D/
 Dataset/
 Weights/
 trained_models/
 Code/pruebas.ipynb
+*.7z
 
 
