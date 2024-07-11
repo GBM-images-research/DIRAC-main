@@ -8,8 +8,13 @@ import glob
 slice_num = 70
 
 
-def imprimir_inferencia(serie, result="Result", recurrence=False):
+def imprimir_inferencia(
+    serie, result="Result", recurrence=False, original=False, deformada=False
+):
     global slice_num
+    recurrence_t1ce_list = sorted(
+        glob.glob("../Dataset/test/*/UPENN-GBM-*_21*_T1GD.nii.gz")
+    )
     if recurrence:
         recurrence_t1ce_list = sorted(
             glob.glob("../Dataset/test/*/UPENN-GBM-*_21*_T1GD.nii.gz")
@@ -22,10 +27,19 @@ def imprimir_inferencia(serie, result="Result", recurrence=False):
             glob.glob("../Dataset/test/*/UPENN-GBM-*_11*_T1GD.nii.gz")
         )
         path_base = base_t1ce_list[serie - 1]
-        path_follow_deformated = f"../{result}/{serie}_Y_X.nii.gz"
+
+        if deformada:
+            # T1GD deformada
+            path_follow_deformated = f"../{result}/{serie}_Y_X.nii.gz"  # T1GD deformada
+        else:
+            # T1GD original
+            path_follow_deformated = recurrence_t1ce_list[serie - 1]  # T1GD original
+
         # Segmentation file
-        segmentation_files = sorted(glob.glob("../Dataset/test/seg_out_*.npy"))
-        path_segmentation = segmentation_files[serie - 1]
+        # segmentation_files = sorted(glob.glob("../Dataset/test/seg_out_*.npy"))
+        # path_segmentation = segmentation_files[serie-1]
+        segmentation_files = sorted(glob.glob("../segmentations/*.nii.gz"))
+        path_segmentation = f"../segmentations/{serie-1}segmentation.nii.gz"
         print("img", path_base)
 
     if recurrence:
@@ -35,7 +49,14 @@ def imprimir_inferencia(serie, result="Result", recurrence=False):
     else:
         img_add = path_base
         img_rec = path_follow_deformated
-        label_add = path_segmentation
+        if original:
+            label_add = path_segmentation
+            print("segmentación original")
+        else:
+            label_add = (
+                f"../{result}/{serie}segmentation_back.nii.gz"  # path_segmentation
+            )
+            print("segmentación deformado")
 
     img = nib.load(img_add).get_fdata()
     img_rec = nib.load(img_rec).get_fdata()
@@ -45,7 +66,11 @@ def imprimir_inferencia(serie, result="Result", recurrence=False):
         seg_out = nib.load(label_add).get_fdata()
         seg_out = seg_out.squeeze()
     else:
-        seg_out = np.load(label_add)
+        if original:
+            # seg_out = np.load(label_add)
+            seg_out = nib.load(label_add).get_fdata()
+        else:
+            seg_out = nib.load(label_add).get_fdata()  # np.load(label_add)
         seg_out = seg_out.squeeze()
 
     # print("seg_out", seg_out.shape)
@@ -127,10 +152,22 @@ def main():
         "--result", type=str, default="Result", help="Carpeta de resultados"
     )
     parser.add_argument(
-        "--backward",
+        "--b",
         default=True,
         action="store_false",
         help="Colocar si queremos usar la deformacion Y_X",
+    )
+    parser.add_argument(
+        "--o",
+        default=False,
+        action="store_true",
+        help="Colocar si queremos ver la segmentacion original",
+    )
+    parser.add_argument(
+        "--d",
+        default=False,
+        action="store_true",
+        help="Colocar si queremos ver la imagen follow sin deformación",
     )
     args = parser.parse_args()
 
@@ -142,7 +179,9 @@ def main():
     # seg_out = nib.load(img_add).get_fdata()
     # slice = 70  # Slice inicial
 
-    imprimir_inferencia(args.serie, args.result, recurrence=args.backward)
+    imprimir_inferencia(
+        args.serie, args.result, recurrence=args.b, original=args.o, deformada=args.d
+    )
 
 
 if __name__ == "__main__":

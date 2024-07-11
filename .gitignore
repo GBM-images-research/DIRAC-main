@@ -170,5 +170,8 @@ Weights/
 trained_models/
 Code/pruebas.ipynb
 *.7z
+#segmentations/
+segmentations_5mm_224x224/
+outputs/
 
 

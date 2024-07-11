@@ -44,10 +44,21 @@ cd ./Code
 and run:
 
 ```
-python3 visualizar.py --serie 2 --result Result --backward
+python3 visualizar.py --serie 2 --result Result_D --b
 ```
 Where `--serie` is the number of case 1, 2, 3,...36, `--result` takes `Result` for deformations of DIRAC method and `Result_D` for deformation of DIRAC-D method.
-Finally put `--backward` if you want to see the Y_X registration (follow image is warped in function of base image) otherwise avoid this argument
+Finally put `--b` if you want to see the Y_X registration (follow image is warped in function of base image) otherwise avoid this argument
+
+Use:
+```
+python3 visualizar.py --serie 2 --result Result_D --b --o --d
+```
+or
+```
+python3 visualizar.py --serie 2 --result Result_D --b --o
+```
+To see new segmentations in images follows with or without registration deformations 
+
 
 ## Publication
 If you find this repository useful, please cite:
